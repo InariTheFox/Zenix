@@ -1,7 +1,7 @@
 #ifndef __SYS_TTY_H__
 #define __SYS_TTY_H__
 
-#include "arch/z180/include/tty.h"
+#include "tty.h"
 #include "tty_driver.h"
 #include "fs.h"
 #include "types.h"

@@ -60,5 +60,6 @@ struct p_tab
 
 void main(void);
 void kprintf(const char *, ...);
+void panic(const char *, ...);
 
 #endif

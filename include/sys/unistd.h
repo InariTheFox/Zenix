@@ -1,8 +1,9 @@
 #ifndef __SYS_UNISTD_H__
 #define __SYS_UNISTD_H__
 
-#include <stdio.h>
+#include "stdio.h"
 #include "types.h"
+#include "utsname.h"
 
 int access(const char *, int);
 int chdir(const char *);
@@ -47,6 +48,7 @@ int symlink(const char *, const char *);
 void sync(void);
 int truncate(const char *, off_t);
 char *ttyname(int);
+int uname(struct utsname *);
 int umask(int);
 int unlink(const char *);
 size_t write(int, const void *, size_t);
