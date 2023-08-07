@@ -1,19 +1,19 @@
 #ifndef __SYS_TTY_H__
 #define __SYS_TTY_H__
 
+#include "fs.h"
 #include "tty.h"
 #include "tty_driver.h"
-#include "fs.h"
 #include "types.h"
 
 struct tty_struct
 {
-    struct tty_driver   driver;
-    struct termio       *termio;
-    int                 session;
-    kdev_t              device;
-    unsigned int        flags;
-    int                 count;
+    struct tty_driver driver;
+    struct termio    *termio;
+    int               session;
+    kdev_t            device;
+    unsigned int      flags;
+    int               count;
 };
 
 extern int rs_init(void);

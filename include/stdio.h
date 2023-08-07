@@ -1,7 +1,7 @@
 #ifndef __STDIO_H__
 #define __STDIO_H__
 
-#include <stddef.h>
+#include "stddef.h"
 
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1

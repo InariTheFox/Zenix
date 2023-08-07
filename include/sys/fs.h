@@ -5,12 +5,14 @@
 
 struct file
 {
-    mode_t          mode;
-    off_t           offset;
-    unsigned int    flags;
-    unsigned int    count;
-    struct file     *next, *prev;
-    int             owner;
+    mode_t       mode;
+    off_t        offset;
+    unsigned int flags;
+    unsigned int count;
+    struct file *next, *prev;
+    int          owner;
 };
+
+void fstab_init(void);
 
 #endif

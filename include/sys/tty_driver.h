@@ -5,13 +5,13 @@
 
 struct tty_driver
 {
-    const char  *name; /* Name of device */
+    const char *name;  /* Name of device */
     char        num;   /* Number of devices */
     int         flags; /* Driver flags */
 
-    int  (*open)(struct tty_struct *tty, struct file *file);
+    int (*open)(struct tty_struct *tty, struct file *file);
     void (*close)(struct tty_struct *tty, struct file *file);
-    int  (*write)(struct tty_struct *tty, const unsigned char *buf, int count);
+    int (*write)(struct tty_struct *tty, const unsigned char *buf, int count);
     void (*start)(struct tty_struct *tty);
     void (*stop)(struct tty_struct *tty);
     void (*hangup)(struct tty_struct *tty);

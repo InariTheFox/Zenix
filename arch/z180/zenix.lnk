@@ -1,0 +1,18 @@
+-mwxuy
+-i zenix.ihx
+-b _CODE=0x0100
+-b _COMMONMEM=0xF000
+-b _INITIALIZER=0xFD00
+arch/z180/crt0.rel
+main.rel
+version.rel
+dma.rel
+exit.rel
+fork.rel
+printk.rel
+panic.rel
+sched.rel
+signal.rel
+time.rel
+uname.rel
+-e
