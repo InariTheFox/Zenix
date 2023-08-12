@@ -71,6 +71,8 @@ __sfr __at (0xDE)                PORT_C_DATA;   /* Port C data register         
 
 #define ei() __asm__("EI")
 
+#define halt() __asm__("HALT")
+
 extern void outb(uint8_t addr, uint8_t value);
 extern uint8_t inb(uint8_t addr);
 

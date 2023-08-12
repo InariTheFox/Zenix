@@ -1,10 +1,11 @@
-#include "sys/kernel.h"
+#include "cpu.h"
 #include "stdarg.h"
 #include "stdio.h"
+#include "sys/kernel.h"
 
 void panic(const char *fmt, ...)
 {
-    static char buf[256];
+    char    buf[256];
     va_list args;
 
     va_start(args, fmt);
@@ -13,5 +14,7 @@ void panic(const char *fmt, ...)
 
     printk("Kernel panic: %s\n", buf);
 
-    for(;;);
+    for (;;)
+    {
+    }
 }

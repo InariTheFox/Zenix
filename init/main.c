@@ -8,6 +8,7 @@
 #include "sys/tty.h"
 #include "sys/unistd.h"
 #include "sys/utsname.h"
+#include "sys/version.h"
 
 uint16_t maxproc;
 uint16_t ramsize;
@@ -39,20 +40,11 @@ int tty_init(void)
 
 void main(void)
 {
-    tty_init();
-    fstab_init();
-    pagemap_init();
+    //tty_init();
+    //fstab_init();
+    //pagemap_init();
 
-    struct utsname sysinfo;
-
-    if (uname(&sysinfo) != 0)
-    {
-        panic("Cannot get uname.");
-    }
-
-    printk("Zenix version %s\n"
-           "Copyright (c) 2023 Brandon Dobbie\n\n",
-           sysinfo.version);
+    printk(banner);
 
 #ifdef PROC_SIZE
     maxproc = procmem / PROC_SIZE;
@@ -67,7 +59,9 @@ void main(void)
     ei();
     printk("OK.\n");
 
-    device_init();
+    //device_init();
 
-    sched_init();
+    //sched_init();
+
+    for(;;){}
 }

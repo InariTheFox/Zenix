@@ -28,6 +28,8 @@ int system(const char *command);
 float atof(const char *str);
 int atoi(const char *str);
 long atol(const char *str);
+void itoa(int value, char *str, unsigned char radix);
+void uitoa(unsigned int value, char *str, unsigned char radix);
 
 int rand(void);
 

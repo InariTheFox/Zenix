@@ -1,8 +1,10 @@
+#include "cpu.h"
 #include "ctype.h"
 #include "stdarg.h"
 #include "stdbool.h"
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 int print_format(char *str, const char *format, va_list arg);
 
@@ -10,8 +12,8 @@ int vsprintf(char *str, const char *format, va_list arg)
 {
     int i;
 
-    i = print_format(&str, format, arg);
-    *str = 0;
+    i = print_format(str, format, arg);
+    //*str = 0;
 
     return i;
 }
@@ -22,8 +24,8 @@ int sprintf(char *str, const char *format, ...)
     int     i;
 
     va_start(arg, format);
-    i = print_format(&str, format, arg);
-    *str = 0;
+    i = print_format(str, format, arg);
+    //*str = 0;
     va_end(arg);
 
     return i;
@@ -31,14 +33,15 @@ int sprintf(char *str, const char *format, ...)
 
 int print_format(char *str, const char *format, va_list arg)
 {
-    char        c, radix;
-    int         i, length;
-    const char *ptr;
-    boolean     lower_case;
+    arg;
+    char c;
+    int  i;
 
     i = 0;
 
-    while (c = *format++)
+    c = *format++;
+
+    while (c != '\0')
     {
         if (c == '%')
         {
@@ -49,64 +52,43 @@ int print_format(char *str, const char *format, va_list arg)
                 continue;
             }
 
-            if (isdigit(c))
-            {
-            }
-
-            if (islower(c))
-            {
-                c = toupper(c);
-                lower_case = true;
-            } else
-            {
-                lower_case = false;
-            }
-
             switch (c)
             {
-            case 'C':
-                c = va_arg(arg, char);
-                *str = c;
-                str++;
-                i++;
-                break;
-            case 'P':
+                case 'd':
+                    int v = va_arg(arg, int);
+                    char *d = 0;
 
-                break;
-            case 'S':
-                ptr = va_arg(arg, const char *);
-                length = strlen(ptr);
+                    itoa(v, d, 10);
 
-                while (c = *ptr)
-                {
-                    *str = c;
-                    str++;
-                    ptr++;
-                }
+                    while((c = *d++))
+                    {
+                        *str++ = c;
+                    }
 
-                break;
-            case 'D':
-            case 'I':
-                radix = 10;
-                break;
-            case 'O':
-                radix = 8;
-                break;
-            case 'X':
-                radix = 16;
-                break;
-            default:
-                *str = c;
-                str++;
-                i++;
-                break;
+                    break;
+                case 's':
+                    char *s = va_arg(arg, char *);
+
+                    while((c = *s++))
+                    {
+                        *str++ = c;
+                    }
+
+                default:
+                    break;
             }
-        } else
-        {
-            *str = c;
-            str++;
         }
+        else
+        {
+            *str++ = c;
+            i++;
+        }
+
+        c = *format++;
     }
+
+    ++*str = 0;
+    i++;
 
     return i;
 }

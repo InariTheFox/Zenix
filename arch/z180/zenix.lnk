@@ -1,8 +1,7 @@
 -mwxuy
 -i zenix.ihx
 -b _CODE=0x0100
--b _COMMONMEM=0xF000
--b _INITIALIZER=0xFD00
+-b _DATA=0x0800
 arch/z180/crt0.rel
 main.rel
 version.rel
@@ -15,4 +14,6 @@ sched.rel
 signal.rel
 time.rel
 uname.rel
+out.rel
+in.rel
 -e

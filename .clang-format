@@ -11,7 +11,7 @@ AlignConsecutiveDeclarations:
     AcrossComments: true
 AlignTrailingComments:
     Kind: Always
-BreakBeforeBraces: Custom
+BreakBeforeBraces: Allman
 BraceWrapping:
     AfterClass: true
     AfterStruct: true

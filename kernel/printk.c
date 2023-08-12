@@ -3,7 +3,7 @@
 #include "stdio.h"
 #include "sys/kernel.h"
 
-static char buf[256];
+char buf[256];
 
 int printk(const char *fmt, ...)
 {
@@ -14,9 +14,11 @@ int printk(const char *fmt, ...)
     di();
 
     va_start(args, fmt);
-    i = vsprintf(buf + 3, fmt, args);
-    buf_end = buf + 3 + i;
+    i = vsprintf(buf, fmt, args);
+    buf_end = buf + i;
     va_end(args);
+
+    puts(buf);
 
     ei();
 

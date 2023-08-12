@@ -1,14 +1,18 @@
 #include "stddef.h"
 #include "string.h"
 
-size_t strlen(const char *str)
+size_t strlen(char *str) __naked
 {
-    int i = 0;
+    str;
 
-    while (*str != '\0')
-    {
-        str++;
-    }
-
-    return i;
+    __asm
+    XOR A
+    LD  B, A
+    LD  C, A
+    CPIR
+    LD  HL, #-1
+    SBC HL, BC
+    EX  DE, HL
+    RET
+    __endasm;
 }
