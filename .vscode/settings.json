@@ -5,7 +5,14 @@
     ],
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
     "files.associations": {
-        "*.c": "c"
+        "*.h": "c",
+        "*.asm": "retroasm_z80",
+        "*.s": "retroasm_z80",
+        "*.c": "c",
+        "cstdlib": "c",
+        "locale": "c",
+        "ostream": "c",
+        "new": "c"
     },
     "workbench.editorAssociations": {
         "*.bin": "hexEditor.hexedit"

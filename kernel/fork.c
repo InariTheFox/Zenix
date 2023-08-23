@@ -1,7 +1,69 @@
+#include "stdint.h"
+#include "string.h"
 #include "sys/errno.h"
+#include "sys/kernel.h"
+#include "sys/process.h"
+#include "sys/sched.h"
 #include "sys/unistd.h"
 
-int fork(void)
+pid_t fork(void)
 {
-    return ENOTIMPL;
+    printk("Forking...\n");
+
+    struct process_t *child;
+    uint16_t *src, *dst, *sp;
+
+    child = proc_create(STACKSIZE);
+
+    if (!child)
+    {
+        return -ENOMEM;
+    }
+
+    child->state = TASK_RUNNING;
+
+    memcpy(&child->regs, &current_proc->regs, sizeof(struct context_t));
+
+    src = current_proc->stack;
+    dst = child->stack;
+
+    __asm
+    exx ; Exchange so we can work with the registers that cannot be pushed
+
+    ld hl, #0
+    add hl, sp
+    ld bc, #_current_proc
+    ex de, hl
+    ld l, c
+    ld h, b
+    ld c, (hl)
+    inc hl
+    ld b, (hl)
+    ld l, c
+    ld h, b
+    ld (hl), e
+    inc hl
+    ld (hl), d
+
+    exx ; Restore registers since we work with them again
+    __endasm;
+
+    sp = context_get_sp(&current_proc->regs);
+
+    printk("src stack: %x, dest stack: %x, current SP: %x (%x)\n", src, dst, sp, current_proc);
+
+    while (src > sp)
+    {
+        dst--;
+        src--;
+        *dst = *src;
+    }
+    
+    context_set_sp(&child->regs, dst);
+
+    printk("src sp: %x, dest sp: %x\n", src, dst);
+
+    child->cwd = current_proc->cwd;
+
+    return child->pid;
 }

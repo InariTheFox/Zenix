@@ -1,12 +1,10 @@
 #include "stdint.h"
 #include "sys/kernel.h"
+#include "sys/process.h"
 #include "sys/unistd.h"
 #include "sys/utsname.h"
 
-int uname(struct utsname *name)
+pid_t getpid(void)
 {
-    uint16_t size = sizeof(name);
-    
-
-    return size;
+    return current_proc->pid;
 }

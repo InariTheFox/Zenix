@@ -1,13 +1,15 @@
 -mwxuy
 -i zenix.ihx
 -b _CODE=0x0100
--b _DATA=0x0800
+-b _DATA=0x1800
 arch/z180/crt0.rel
 main.rel
 version.rel
 dma.rel
+exec.rel
 exit.rel
 fork.rel
+mm.rel
 printk.rel
 panic.rel
 sched.rel
@@ -16,4 +18,9 @@ time.rel
 uname.rel
 out.rel
 in.rel
+inode.rel
+init.rel
+process.rel
+context.rel
+syscall.rel
 -e

@@ -7,19 +7,20 @@ export AS
 export CC
 
 CSRCS = init/main.c init/version.c
-CSRCS += kernel/dma.c kernel/exit.c kernel/fork.c kernel/panic.c kernel/printk.c kernel/sched.c kernel/signal.c kernel/time.c kernel/uname.c
+CSRCS += kernel/dma.c kernel/exit.c kernel/fork.c kernel/panic.c kernel/printk.c kernel/mm.c kernel/sched.c kernel/signal.c kernel/syscall.c kernel/time.c kernel/uname.c kernel/init.c fs/inode.c
 
-LIBSRCS = lib/ctype.c lib/string/strlen.c lib/stdlib/sprintf.c lib/stdio/puts.c lib/stdio/putchar.c
+LIBSRCS = lib/ctype.c lib/string/strlen.c lib/string/strcpy.c lib/string/memcpy.c lib/string/memset.c lib/stdlib/sprintf.c lib/stdlib/malloc.c lib/stdio/puts.c lib/stdio/putchar.c lib/stdlib/itoa.c
 
 include arch/$(TARGET)/rules.mk
 
 AOBJS = $(ASRCS:.s=.rel)
 COBJS = $(CSRCS:.c=.rel)
 LIBOBJS = $(LIBSRCS:.c=.rel)
+LIBAOBJS = $(LIBASRCS:.s=.rel)
 
 OBJS = $(AOBJS) $(COBJS)
 
-all: ver include/sys/version.h $(LIBOBJS) cstd.lib $(OBJS) zenix.ihx
+all: clean ver include/sys/version.h $(LIBOBJS) $(LIBAOBJS) cstd.lib $(OBJS) zenix.ihx
 
 ver: dummy
 	rm -f include/sys/version.h
@@ -32,6 +33,9 @@ $(COBJS): %.rel: %.c
 
 $(LIBOBJS): %.rel: %.c
 	$(CC) $(CFLAGS) $<
+
+$(LIBAOBJS): %.rel: %.s
+	$(AS) $(ASFLAGS) $<
 
 include/sys/version.h: dummy
 	@if [ ! -f .version ]; then \
@@ -52,16 +56,17 @@ include/sys/version.h: dummy
 	@mv -f .ver $@
 
 cstd.lib:
-	$(AR) -rc cstd.lib $(notdir $(LIBOBJS))
+	$(AR) -rc cstd.lib $(notdir $(LIBOBJS)) $(LIBAOBJS)
 
 zenix.ihx: arch/$(TARGET)/zenix.lnk
 	$(LD) $(LDFLAGS) arch/$(TARGET)/zenix.lnk -L cstd
 	srec_cat -Disable_Sequence_Warnings zenix.ihx -Intel -o zenix.bin -Binary
 
 clean: 
-	rm -f .version include/sys/version.h
+	rm -f include/sys/version.h
 	rm -f *~ *.rel *.asm *.lst *.sym *.o *.map *.noi *.bin *.lk *.rst *.cdb *.ihx *.lib
 	rm -f arch/$(TARGET)/*.rel arch/$(TARGET)/*.asm arch/$(TARGET)/*.lst arch/$(TARGET)/*.sym arch/$(TARGET)/*.rst
+	rm -f arch/$(TARGET)/lib/*.rel arch/$(TARGET)/lib/*.asm arch/$(TARGET)/lib/*.lst arch/$(TARGET)/lib/*.sym arch/$(TARGET)/lib/*.rst
 	rm -f zenix
 
 run:

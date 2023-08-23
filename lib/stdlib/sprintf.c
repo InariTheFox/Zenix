@@ -1,10 +1,9 @@
-#include "cpu.h"
 #include "ctype.h"
 #include "stdarg.h"
 #include "stdbool.h"
 #include "stdio.h"
-#include "string.h"
 #include "stdlib.h"
+#include "string.h"
 
 int print_format(char *str, const char *format, va_list arg);
 
@@ -13,7 +12,6 @@ int vsprintf(char *str, const char *format, va_list arg)
     int i;
 
     i = print_format(str, format, arg);
-    //*str = 0;
 
     return i;
 }
@@ -25,7 +23,6 @@ int sprintf(char *str, const char *format, ...)
 
     va_start(arg, format);
     i = print_format(str, format, arg);
-    //*str = 0;
     va_end(arg);
 
     return i;
@@ -33,15 +30,15 @@ int sprintf(char *str, const char *format, ...)
 
 int print_format(char *str, const char *format, va_list arg)
 {
-    arg;
-    char c;
-    int  i;
+    char  c;
+    char *s;
+    int   i, v;
 
     i = 0;
 
     c = *format++;
 
-    while (c != '\0')
+    while (c != 0)
     {
         if (c == '%')
         {
@@ -54,28 +51,30 @@ int print_format(char *str, const char *format, va_list arg)
 
             switch (c)
             {
-                case 'd':
-                    int v = va_arg(arg, int);
-                    char *d = 0;
+            case 'd':
+                v = va_arg(arg, int);
+                str = itoa(v, str, 10);
 
-                    itoa(v, d, 10);
+                break;
+            case 'x':
+                *str++ = '0';
+                *str++ = 'x';
 
-                    while((c = *d++))
-                    {
-                        *str++ = c;
-                    }
+                v = va_arg(arg, int);
+                str = itoa(v, str, 16);
 
-                    break;
-                case 's':
-                    char *s = va_arg(arg, char *);
+                break;
+            case 's':
+                s = va_arg(arg, char *);
 
-                    while((c = *s++))
-                    {
-                        *str++ = c;
-                    }
+                while ((c = *s++))
+                {
+                    *str++ = c;
+                    i++;
+                }
 
-                default:
-                    break;
+            default:
+                break;
             }
         }
         else
