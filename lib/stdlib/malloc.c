@@ -60,8 +60,8 @@ alloc:
 
     cur->size = length;
 
-    printk("malloc: allocating %d bytes at %x\n", length + sizeof(uint16_t), cur);
-    printk("malloc: %d bytes free remaining\n", next->size);
+    printk("malloc: allocating %d bytes at %x\n", cur->size, cur);
+    printk("malloc: %d bytes free remaining at %x\n", next->size, next);
 
     return (((uint8_t *)cur) + sizeof(uint16_t));
 }

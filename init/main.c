@@ -68,7 +68,7 @@ void main(void)
     // device_init();
 
     proc_init();
-    // sched_init();
+    sched_init();
 
     if (!fork())
     {

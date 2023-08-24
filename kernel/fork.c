@@ -27,26 +27,28 @@ pid_t fork(void)
     src = current_proc->stack;
     dst = child->stack;
 
+    // clang-format off
     __asm
-    exx ; Exchange so we can work with the registers that cannot be pushed
+    exx                     ; Backup registers
 
     ld hl, #0
-    add hl, sp
-    ld bc, #_current_proc
-    ex de, hl
-    ld l, c
+    add hl, sp              ; Load SP in to HL
+    ex de, hl               ; Backup SP as we need it later
+    ld bc, #_current_proc   ; Load in to BC pointer to the current process struct
+    ld l, c                 ; Load BC in to HL
     ld h, b
-    ld c, (hl)
+    ld c, (hl)              ; Load in to BC the pointers memory location
     inc hl
     ld b, (hl)
-    ld l, c
+    ld l, c                 ; Load in to HL the pointer memory location
     ld h, b
-    ld (hl), e
+    ld (hl), e              ; Set SP in the struct
     inc hl
     ld (hl), d
 
-    exx ; Restore registers since we work with them again
+    exx                     ; Restore registers
     __endasm;
+    // clang-format on
 
     sp = context_get_sp(&current_proc->regs);
 

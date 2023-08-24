@@ -7,8 +7,6 @@ int _modsint(int n, int d) { return div(n, d).rem; }
 div_t div(int n, int d)
 {
     div_t result = {0, n};
-    // result.rem = n;
-    // result.quot = 0;
 
     while (result.rem >= d)
     {
