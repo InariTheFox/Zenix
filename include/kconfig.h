@@ -1,5 +1,5 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef __KCONFIG_H__
+#define __KCONFIG_H__
 
 #ifndef UTS_SYSNAME
 #define UTS_SYSNAME     "Zenix"

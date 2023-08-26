@@ -28,9 +28,7 @@
         .globl l__CONST
         .globl kstack_top
         .globl ___sdcc_enter_ix
-        .globl _heap_start
-        .globl _heap_end
-        .globl _stack_top
+        .globl _init_kernel_stack
 
         .area _CODE
 init:
@@ -62,10 +60,6 @@ ___sdcc_enter_ix:
 
         .area _DATA
         
-_heap_start = 0x2000
-_heap_end   = 0x7FFF
-_stack_top  = kstack_top
-
 _udata:
 kstack_base:
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

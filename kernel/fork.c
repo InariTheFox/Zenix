@@ -1,71 +1,123 @@
+#include "config.h"
+#include "context.h"
+#include "cpu.h"
 #include "stdint.h"
+#include "stdlib.h"
 #include "string.h"
 #include "sys/errno.h"
 #include "sys/kernel.h"
-#include "sys/process.h"
 #include "sys/sched.h"
 #include "sys/unistd.h"
 
-pid_t fork(void)
+#define MAX_TASKS_FOR_USER (NR_TASKS / 2)
+#define MIN_TASKS_FOR_ROOT 4
+
+pid_t last_pid = 0;
+
+static int find_empty_proc(void)
 {
-    printk("Forking...\n");
+    int free_task;
+    int i, tasks_free;
+    int this_user_tasks;
 
-    struct process_t *child;
-    uint16_t *src, *dst, *sp;
-
-    child = proc_create(STACKSIZE);
-
-    if (!child)
+repeat:
+    if ((++last_pid) & 0xff80)
     {
-        return -ENOMEM;
+        last_pid = 1;
     }
 
-    child->state = TASK_RUNNING;
+    this_user_tasks = 0;
+    tasks_free = 0;
+    free_task = -EAGAIN;
+    i = NR_TASKS;
+    while (--i > 0)
+    {
+        if (!task[i])
+        {
+            free_task = i;
+            tasks_free++;
+            continue;
+        }
 
-    memcpy(&child->regs, &current_proc->regs, sizeof(struct context_t));
+        if (task[i]->uid == current->uid)
+        {
+            this_user_tasks++;
+        }
 
-    src = current_proc->stack;
-    dst = child->stack;
+        if (task[i]->pid == last_pid || task[i]->session == last_pid)
+        {
+            goto repeat;
+        }
+    }
 
-    // clang-format off
-    __asm
-    exx                     ; Backup registers
+    if (tasks_free <= MIN_TASKS_FOR_ROOT ||
+        this_user_tasks > MAX_TASKS_FOR_USER)
+    {
+        if (current->uid)
+        {
+            return -EAGAIN;
+        }
+    }
 
-    ld hl, #0
-    add hl, sp              ; Load SP in to HL
-    ex de, hl               ; Backup SP as we need it later
-    ld bc, #_current_proc   ; Load in to BC pointer to the current process struct
-    ld l, c                 ; Load BC in to HL
-    ld h, b
-    ld c, (hl)              ; Load in to BC the pointers memory location
-    inc hl
-    ld b, (hl)
-    ld l, c                 ; Load in to HL the pointer memory location
-    ld h, b
-    ld (hl), e              ; Set SP in the struct
-    inc hl
-    ld (hl), d
+    return free_task;
+}
 
-    exx                     ; Restore registers
-    __endasm;
-    // clang-format on
+pid_t fork(void)
+{
+    int               nr;
+    struct process_t *p;
+    uint16_t         *src, *dst, *srclimit;
 
-    sp = context_get_sp(&current_proc->regs);
+    if (!(p = malloc(sizeof(struct process_t) + STACK_SIZE)))
+    {
+        goto bad_fork;
+    }
 
-    printk("src stack: %x, dest stack: %x, current SP: %x (%x)\n", src, dst, sp, current_proc);
+    nr = find_empty_proc();
+    if (nr < 0)
+    {
+        goto bad_fork_cleanup;
+    }
 
-    while (src > sp)
+    src = &current->kernel_stack;
+    dst = (uint16_t *)((uint16_t)p + sizeof(struct process_t) + STACK_SIZE);
+
+    srclimit = context_get_sp(&current->regs);
+    printk("fork: src %x, dst: %x, sp: %x\n", src, dst, srclimit);
+
+    while (src > srclimit)
     {
         dst--;
         src--;
         *dst = *src;
     }
-    
-    context_set_sp(&child->regs, dst);
 
-    printk("src sp: %x, dest sp: %x\n", src, dst);
+    context_set_sp(&p->regs, dst);
 
-    child->cwd = current_proc->cwd;
+    *p = *current;
+    p->state = TASK_UNINTERRUPTABLE;
+    p->pid = last_pid;
+    p->signal = 0;
+    p->parent = current;
+    p->prev = NULL;
+    p->child = NULL;
+    p->next = &init_task;
+    init_task.prev->next = p;
+    init_task.prev = p;
+    task[nr] = p;
 
-    return child->pid;
+    // TODO: pwd
+    // TODO: root
+    p->counter = current->counter >> 1;
+    p->state = TASK_RUNNING;
+
+    printk("fork: pid %d, counter %d\n", p->pid, p->counter);
+
+    return p->pid;
+
+bad_fork_cleanup:
+    task[nr] = NULL;
+bad_fork_free:
+bad_fork:
+    return -EAGAIN;
 }

@@ -32,7 +32,7 @@ int print_format(char *str, const char *format, va_list arg)
 {
     char  c;
     char *s;
-    int   i, v;
+    int   i;
 
     i = 0;
 
@@ -52,16 +52,26 @@ int print_format(char *str, const char *format, va_list arg)
             switch (c)
             {
             case 'd':
-                v = va_arg(arg, int);
+                int v = va_arg(arg, int);
                 str = itoa(v, str, 10);
+
+                break;
+            case 'l':
+                long int l = va_arg(arg, long int);
+                str = ltoa(l, str, 10);
 
                 break;
             case 'x':
                 *str++ = '0';
                 *str++ = 'x';
 
-                v = va_arg(arg, int);
-                str = itoa(v, str, 16);
+                unsigned int u = va_arg(arg, unsigned int);
+                str = utoa(u, str, 16);
+
+                break;
+            case 'u':
+                u = va_arg(arg, unsigned int);
+                str = utoa(u, str, 10);
 
                 break;
             case 's':

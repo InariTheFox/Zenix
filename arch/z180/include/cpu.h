@@ -1,7 +1,7 @@
 #ifndef __ARCH_Z180_CPU_H__
 #define __ARCH_Z180_CPU_H__
 
-#include "../config.h"
+#include "config.h"
 #include "stdint.h"
 
 #define Z180_INT_UNUSED 0xFF

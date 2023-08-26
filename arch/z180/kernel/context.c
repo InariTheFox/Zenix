@@ -1,8 +1,14 @@
-#include "sys/process.h"
+#include "sys/kernel.h"
+#include "sys/sched.h"
 
-uint16_t *context_get_sp(struct context_t *context) { return (uint16_t *)context->sp; }
+void switch_to(struct process_t *next) { next; }
 
-void context_set_sp(struct context_t *context, uint16_t *ptr)
+uint16_t *context_get_sp(struct context_t *context)
 {
-    context->sp = (uint16_t)ptr;
+    return (uint16_t *)context->sp;
+}
+
+void context_set_sp(struct context_t *context, uint16_t *sp)
+{
+    context->sp = (uint16_t)sp;
 }

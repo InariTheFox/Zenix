@@ -16,7 +16,7 @@ void *malloc(size_t length)
         length = sizeof(struct mm_block);
     }
 
-    printk("malloc: requesting %d bytes\n", length);
+    printk("malloc: requesting %u bytes\n", length);
 
     length = (length + 1) & -2;
 
@@ -42,7 +42,7 @@ void *malloc(size_t length)
     return NULL;
 
 split:
-    printk("malloc: splitting block at %x (%d bytes)\n", cur, cur->size);
+    printk("malloc: splitting block at %x (%u bytes)\n", cur, cur->size);
 
     next = (struct mm_block *)(cur + sizeof(uint16_t) + length);
     next->next = cur->next;
@@ -60,8 +60,8 @@ alloc:
 
     cur->size = length;
 
-    printk("malloc: allocating %d bytes at %x\n", cur->size, cur);
-    printk("malloc: %d bytes free remaining at %x\n", next->size, next);
+    printk("malloc: allocating %u bytes at %x\n", cur->size, cur);
+    printk("malloc: %u bytes free remaining at %x\n", next->size, next);
 
     return (((uint8_t *)cur) + sizeof(uint16_t));
 }

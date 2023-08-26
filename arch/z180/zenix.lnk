@@ -1,7 +1,7 @@
 -mwxuy
 -i zenix.ihx
 -b _CODE=0x0100
--b _DATA=0x1800
+-b _DATA=0x2000
 arch/z180/crt0.rel
 main.rel
 version.rel
@@ -20,7 +20,6 @@ out.rel
 in.rel
 inode.rel
 init.rel
-process.rel
 context.rel
 syscall.rel
 -e

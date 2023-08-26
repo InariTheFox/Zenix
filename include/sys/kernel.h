@@ -32,9 +32,8 @@
 #define PTABSIZE 15
 #endif
 
-extern uint16_t maxproc;
-extern uint16_t ramsize;
-extern uint16_t procmem;
+extern uint32_t ramsize;
+extern uint32_t procmem;
 
 struct p_tab
 {
@@ -53,10 +52,6 @@ struct p_tab
     uint16_t page;
     uint16_t priority;
 };
-
-#ifndef STACKSIZE
-#define STACKSIZE 512
-#endif
 
 void main(void);
 int  printk(const char *, ...);

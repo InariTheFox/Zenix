@@ -2,6 +2,7 @@
 #define __STDLIB_H__
 
 #include "stddef.h"
+#include "stdint.h"
 
 void *calloc(size_t num, size_t size);
 void  free(void *ptr);
@@ -29,6 +30,8 @@ float atof(const char *str);
 int   atoi(const char *str);
 long  atol(const char *str);
 char *itoa(int value, char *str, unsigned char radix);
+char *utoa(unsigned int value, char *str, unsigned char radix);
+char *ltoa(long value, char *str, unsigned char radix);
 
 int rand(void);
 
@@ -38,6 +41,13 @@ typedef struct
     int rem;
 } div_t;
 
-div_t div(int n, int d);
+typedef struct
+{
+    long int quot;
+    long int rem;
+} ldiv_t;
+
+div_t  div(int n, int d);
+ldiv_t ldiv(long int n, long int d);
 
 #endif

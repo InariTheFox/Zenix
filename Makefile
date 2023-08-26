@@ -7,7 +7,7 @@ export AS
 export CC
 
 CSRCS = init/main.c init/version.c
-CSRCS += kernel/dma.c kernel/exit.c kernel/fork.c kernel/panic.c kernel/printk.c kernel/mm.c kernel/sched.c kernel/signal.c kernel/syscall.c kernel/time.c kernel/uname.c kernel/init.c fs/inode.c
+CSRCS += kernel/dma.c kernel/exec.c kernel/exit.c kernel/fork.c kernel/panic.c kernel/printk.c kernel/mm.c kernel/sched.c kernel/signal.c kernel/syscall.c kernel/time.c kernel/uname.c kernel/init.c fs/inode.c
 
 LIBSRCS = lib/ctype.c lib/string/strlen.c lib/string/strcpy.c lib/string/memcpy.c lib/string/memset.c lib/stdlib/sprintf.c lib/stdlib/malloc.c lib/stdio/puts.c lib/stdio/putchar.c lib/stdlib/itoa.c
 
@@ -52,6 +52,7 @@ include/sys/version.h: dummy
 	@echo \#define ZENIX_COMPILE_TIME \"`date +%T`\" >> .ver
 	@echo \#define ZENIX_COMPILE_BY \"`whoami`\" >> .ver
 	@echo \#define ZENIX_COMPILER \"$(CC)\" >> .ver
+	@echo \#define ZENIX_ARCH \"$(TARGET)\" >> .ver
 	@echo extern char \*banner\; >> .ver
 	@mv -f .ver $@
 

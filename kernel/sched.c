@@ -1,38 +1,106 @@
 #include "sys/sched.h"
+#include "cpu.h"
 #include "sys/kernel.h"
-#include "sys/process.h"
 
-void sched_init(void) { printk("sched_init()\n"); }
+unsigned int init_kernel_stack[STACK_SIZE] = {
+    0,
+};
+struct process_t  init_task = INIT_TASK;
+struct process_t *current = &init_task;
+struct process_t *task[NR_TASKS] = {
+    &init_task,
+};
 
-void switch_context(process_t *next)
+inline int goodness(struct process_t *p, struct process_t *prev)
 {
-    // We should have saved the stack pointer for the current task when a fork()
-    // is called. Fork() should be what's happening to spawn any process,
-    // including when execa/execv/execve is called.
+    int weight;
 
-    // clang-format off
-    __asm
+    weight = p->counter;
 
-    push af                 ; Push registers to stack in reverse order of context_t
-    push bc
-    push de
-    push hl
-    push ix
-    push iy
+    if (weight)
+    {
+        if (p == prev)
+        {
+            weight += 1;
+        }
+    }
 
-    ld de, #_current_proc   ; Load in to BE pointer to the current process struct
-    inc de                  ; Increment DE by 4 as context_t first field is SP
-    inc de
-    inc de
-    inc de
+    return weight;
+}
 
-    ld hl, #4               ; Load SP into HL and add 4 to offset
-    add hl, sp
+void sched_init(void)
+{
+    int i;
 
-    ld bc, #12              ; Set the number of bytes to read
+    printk("sched_init()\n");
 
-    ldir                    ; Load (HL) into (DE) and decrement BC until 0
+    for (i = 1; i < NR_TASKS; i++)
+    {
+        task[i] = NULL;
+    }
+}
 
-    __endasm;
-    // clang-format on
+void schedule(void)
+{
+    printk("schedule()\n");
+    int               c;
+    struct process_t *p;
+    struct process_t *prev, *next;
+
+    di();
+
+    prev = current;
+
+    if (!prev->counter)
+    {
+        prev->counter = prev->priority;
+    }
+
+    switch (prev->state)
+    {
+    case TASK_INTERRUPTABLE:
+        if (prev->signal & ~prev->blocked)
+        {
+            prev->state = TASK_RUNNING;
+        }
+        break;
+    default:
+    case TASK_RUNNING:
+    }
+
+    p = init_task.next;
+
+    ei();
+
+#define idle_task (&init_task);
+
+    c = -1000;
+    next = idle_task;
+
+    while (p != &init_task)
+    {
+        int weight = goodness(p, prev);
+        if (weight > c)
+        {
+            c = weight, next = p;
+        }
+
+        p = p->next;
+    }
+
+    if (!c)
+    {
+        for (p = &init_task; (p = p->next) != &init_task;)
+        {
+            p->counter = (p->counter >> 1) + p->priority;
+        }
+    }
+
+    if (prev != next)
+    {
+        printk("sched: switching to pid %d, counter %d, priority %d\n",
+               next->pid, next->counter, next->priority);
+
+        switch_to(next);
+    }
 }
