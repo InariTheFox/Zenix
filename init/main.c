@@ -13,8 +13,8 @@
 #include "sys/utsname.h"
 #include "sys/version.h"
 
-uint32_t          ramsize;
-uint32_t          procmem;
+uint32_t ramsize;
+uint32_t procmem;
 
 void init(void);
 
@@ -39,19 +39,14 @@ void main(void)
     printk(banner);
 
     ramsize = 65536;
-
-#ifdef PROC_SIZE
     procmem = PROGTOP - PROGBASE;
-#else
-    maxproc = PTABSIZE;
-#endif
 
     mm_init((uint16_t *)PROGBASE, procmem);
     tty_init();
     inode_init();
     pagemap_init();
 
-    printk("%uKB total RAM ",ramsize / 1024);
+    printk("%uKB total RAM ", ramsize / 1024);
     printk("%uKB available to processes ", procmem / 1024);
     printk("(%d processes max)\n", NR_TASKS);
 

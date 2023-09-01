@@ -36,12 +36,13 @@ struct process_t
     gid_t             gid, egid;                                  /* */
     uint16_t          session;                                    /* */
     uint32_t          utime, stime;                               /* */
-    struct inode_t   *cwd;                                        /* */
+    struct inode_t   *pwd;                                        /* */
+    struct inode_t   *root;                                       /* */
     struct context_t  regs;                                       /* */
 };
 
 // clang-format off
-#define INIT_TASK \
+/*#define INIT_TASK \
 { \
     0, 15, 15, 0, 0, 0, 0, \
     &init_task, &init_task, &init_task, NULL, \
@@ -56,10 +57,13 @@ struct process_t
     0,0, \
     NULL, \
     INIT_CONTEXT, \
-}
+}*/
 // clang-format on
 
-extern struct process_t  init_task;
+extern unsigned int  init_kernel_stack[2048];
+extern unsigned int *init_kernel_stack_top;
+
+extern struct process_t *init_task;
 extern struct process_t *task[NR_TASKS];
 extern struct process_t *current;
 

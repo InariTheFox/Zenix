@@ -1,9 +1,19 @@
 #include "stdint.h"
 #include "stdlib.h"
-#include "sys/mm.h"
+#include "string.h"
 #include "sys/kernel.h"
+#include "sys/mm.h"
 
-extern struct mm_block *first_free;
+void free(void *ptr)
+{
+    struct mm_block *prev = first_free;
+
+    first_free = (struct mm_block *)(ptr - sizeof(struct mm_block));
+
+    memset(first_free + sizeof(struct mm_block), 0, first_free->size);
+
+    first_free->next = prev;
+}
 
 void *malloc(size_t length)
 {

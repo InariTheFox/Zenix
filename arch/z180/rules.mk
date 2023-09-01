@@ -2,7 +2,7 @@ export AS 		= sdasz80
 export AR		= sdar
 export CC 		= sdcc
 export ASFLAGS 	= -plosff
-export CFLAGS 	= -c --std-sdcc99 --no-std-crt0 --nostdlib --nostdinc --Werror -m$(TARGET) -Iarch/$(TARGET)/include -Iinclude --fno-omit-frame-pointer --constseg CONST
+export CFLAGS 	= -c --std-sdcc2x --no-std-crt0 --nostdlib --nostdinc --Werror -m$(TARGET) -Iarch/$(TARGET)/include -Iinclude --constseg CONST
 export LD 		= sdldz80
 export LDFLAGS	= -f
 

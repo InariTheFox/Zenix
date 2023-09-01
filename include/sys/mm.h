@@ -17,6 +17,9 @@ struct heap_t
     struct heap_t *next;
 };
 
+extern struct mm_block *first_free;
+extern struct mm_block *mem_start;
+
 void mm_init(uint16_t *, uint16_t);
 void pagemap_init(void);
 

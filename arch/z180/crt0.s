@@ -26,9 +26,8 @@
         .globl l__DATA
         .globl s__CONST
         .globl l__CONST
-        .globl kstack_top
-        .globl ___sdcc_enter_ix
         .globl _init_kernel_stack
+        .globl _init_kernel_stack_top
 
         .area _CODE
 init:
@@ -37,7 +36,7 @@ init:
 	;ld	a,#0xFE
 	;out	(0x0D),a
         ; Load SP with the kernel stack location
-        ld	sp, #kstack_top
+        ld	sp, #_init_kernel_stack_top
 
         ; Load data pointers
         ld      de, #s__INITIALIZED
@@ -51,17 +50,11 @@ init:
 stop:   halt
         jr stop
 
-___sdcc_enter_ix:
-        pop     hl   ; hl = return address
-        push    ix   ; save previous stack frame
-        ld      ix, #0
-        add     ix,sp   ; ix = new stack frame
-        jp      (hl)   ; return
-
         .area _DATA
         
 _udata:
-kstack_base:
+_init_kernel_stack:
+        .db 0xDE, 0xAD, 0xBE, 0xEF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -76,6 +69,5 @@ kstack_base:
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-kstack_top:
+        .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xDE, 0xAD, 0xBE, 0xEF
+_init_kernel_stack_top:

@@ -10,14 +10,12 @@
 
 #define CONFIG_BANKS 1 /* Banks as reported to user space */
 
-#define PROGBASE     0x8000                   /* Program base */
-#define PROGLOAD     0x0100                   /* Program vector */
-#define PROGTOP      0xF000                   /* Top of program */
-#define KERNTOP      0x7FFF                   /* Kernel has lower 32KB */
-#define STACK_SIZE   512                      /* Stack size in bytes */
-#define PROC_HEADER  64                       /* Size of process_t header */
-#define PROC_SIZE    PROC_HEADER + STACK_SIZE /* Memory needed per process */
-#define DEFAULT_HEAP 1024                     /* Default size of process heap */
+#define PROGBASE     0x8000 /* Program base */
+#define PROGLOAD     0x0100 /* Program vector */
+#define PROGTOP      0xF000 /* Top of program */
+#define KERNTOP      0x7FFF /* Kernel has lower 32KB */
+#define STACK_SIZE   1024   /* Stack size in bytes */
+#define DEFAULT_HEAP 1024   /* Default size of process heap */
 
 #define Z180_IO_BASE 0xC0
 
@@ -26,5 +24,7 @@
 #define TTY_INIT_BAUD B115200
 
 #define TTYDEV BOOT_TTY /* Device used by kernel for messages, panics, etc. */
+
+#define ROOT_DEV 330
 
 #endif

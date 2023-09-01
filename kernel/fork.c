@@ -64,9 +64,16 @@ repeat:
 
 pid_t fork(void)
 {
+    save_regs();
+
     int               nr;
     struct process_t *p;
     uint16_t         *src, *dst, *srclimit;
+
+    printk("sp: %x, pc: %x\n", current->regs.sp, current->regs.pc);
+    printk("af: %x, bc: %x\n", current->regs.af, current->regs.bc);
+    printk("de: %x, hl: %x\n", current->regs.de, current->regs.hl);
+    printk("ix: %x, iy: %x\n", current->regs.ix, current->regs.iy);
 
     if (!(p = malloc(sizeof(struct process_t) + STACK_SIZE)))
     {
@@ -79,10 +86,10 @@ pid_t fork(void)
         goto bad_fork_cleanup;
     }
 
-    src = &current->kernel_stack;
+    src = (uint16_t *)current->kernel_stack;
     dst = (uint16_t *)((uint16_t)p + sizeof(struct process_t) + STACK_SIZE);
 
-    srclimit = context_get_sp(&current->regs);
+    srclimit = (uint16_t *)current->regs.sp;
     printk("fork: src %x, dst: %x, sp: %x\n", src, dst, srclimit);
 
     while (src > srclimit)
@@ -92,8 +99,6 @@ pid_t fork(void)
         *dst = *src;
     }
 
-    context_set_sp(&p->regs, dst);
-
     *p = *current;
     p->state = TASK_UNINTERRUPTABLE;
     p->pid = last_pid;
@@ -101,17 +106,28 @@ pid_t fork(void)
     p->parent = current;
     p->prev = NULL;
     p->child = NULL;
-    p->next = &init_task;
-    init_task.prev->next = p;
-    init_task.prev = p;
+    p->next = init_task;
+    current->prev->next = p;
+    current->prev = p;
     task[nr] = p;
+
+    memcpy(&p->regs, &current->regs, sizeof(struct context_t));
+
+    p->regs.sp = (uint16_t)dst;
 
     // TODO: pwd
     // TODO: root
     p->counter = current->counter >> 1;
     p->state = TASK_RUNNING;
+    p->regs.de = 0;
 
-    printk("fork: pid %d, counter %d\n", p->pid, p->counter);
+    printk("sp: %x, pc: %x\n", p->regs.sp, p->regs.pc);
+    printk("af: %x, bc: %x\n", p->regs.af, p->regs.bc);
+    printk("de: %x, hl: %x\n", p->regs.de, p->regs.hl);
+    printk("ix: %x, iy: %x\n", p->regs.ix, p->regs.iy);
+
+    printk("fork: pid %d, counter %d, priority %d\n", p->pid, p->counter,
+           p->priority);
 
     return p->pid;
 

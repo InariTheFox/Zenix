@@ -16,6 +16,18 @@ int vsprintf(char *str, const char *format, va_list arg)
     return i;
 }
 
+/*int printf(const char *format, ...)
+{
+    va_list arg;
+    int i;
+
+    va_start(arg, format);
+    i = print_format(str, format, arg);
+    va_end(arg);
+
+    return i;
+}*/
+
 int sprintf(char *str, const char *format, ...)
 {
     va_list arg;

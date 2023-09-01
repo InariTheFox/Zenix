@@ -16,7 +16,7 @@ int         *crypt(const char *, const char *);
 int          dup(int);
 void         encrypt(char *, int);
 int          eof(int);
-int          execa(void *, const char**);
+int          execa(void *, const char **);
 int          execv(const char *, const char **);
 int          execve(const char *, const char **);
 int          execvp(const char *, const char **);
@@ -53,6 +53,7 @@ char        *ttyname(int);
 int          uname(struct utsname *);
 int          umask(int);
 int          unlink(const char *);
+pid_t        waitpid(pid_t, int *);
 size_t       write(int, const void *, size_t);
 
 #endif

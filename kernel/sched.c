@@ -1,15 +1,15 @@
 #include "sys/sched.h"
 #include "cpu.h"
+#include "stdlib.h"
+#include "string.h"
 #include "sys/kernel.h"
+#include "sys/unistd.h"
 
-unsigned int init_kernel_stack[STACK_SIZE] = {
-    0,
-};
-struct process_t  init_task = INIT_TASK;
-struct process_t *current = &init_task;
-struct process_t *task[NR_TASKS] = {
-    &init_task,
-};
+struct process_t *init_task;
+struct process_t *current;
+struct process_t *task[NR_TASKS];
+
+#define idle_task (&init_task);
 
 inline int goodness(struct process_t *p, struct process_t *prev)
 {
@@ -30,19 +30,29 @@ inline int goodness(struct process_t *p, struct process_t *prev)
 
 void sched_init(void)
 {
-    int i;
+    printk("sched_init: base %x, tasks %d\n", task, NR_TASKS);
 
-    printk("sched_init()\n");
-
-    for (i = 1; i < NR_TASKS; i++)
+    for (int i = 1; i < NR_TASKS; i++)
     {
         task[i] = NULL;
     }
+
+    init_task = malloc(sizeof(struct process_t));
+
+    current = init_task;
+    current->counter = 15;
+    current->priority = 15;
+    current->next = current;
+    current->prev = current;
+    current->parent = current;
+    current->kernel_stack = (uint16_t)&init_kernel_stack_top;
+    current->regs.sp = (uint16_t)&init_kernel_stack_top;
+
+    printk("sched_init: stack %x\n", current->kernel_stack);
 }
 
 void schedule(void)
 {
-    printk("schedule()\n");
     int               c;
     struct process_t *p;
     struct process_t *prev, *next;
@@ -68,16 +78,14 @@ void schedule(void)
     case TASK_RUNNING:
     }
 
-    p = init_task.next;
+    p = init_task->next;
 
     ei();
 
-#define idle_task (&init_task);
-
     c = -1000;
-    next = idle_task;
+    next = *idle_task;
 
-    while (p != &init_task)
+    while (p != init_task)
     {
         int weight = goodness(p, prev);
         if (weight > c)
@@ -90,7 +98,7 @@ void schedule(void)
 
     if (!c)
     {
-        for (p = &init_task; (p = p->next) != &init_task;)
+        for (p = init_task; (p = p->next) != init_task;)
         {
             p->counter = (p->counter >> 1) + p->priority;
         }
@@ -98,9 +106,62 @@ void schedule(void)
 
     if (prev != next)
     {
-        printk("sched: switching to pid %d, counter %d, priority %d\n",
-               next->pid, next->counter, next->priority);
+        printk("sched (%d): switching to pid %d, counter %d, priority %d\n",
+               current->pid, next->pid, next->counter, next->priority);
+        printk("sched: next base %x\n", next);
 
-        switch_to(next);
+        current->prev = next;
+
+        current = next;
+        switch_to(current);
     }
+}
+
+pid_t waitpid(pid_t pid, int *status)
+{
+    printk("waitpid()\n");
+
+    while (current)
+    {
+        if (current->parent == current && current->state == TASK_ZOMBIE)
+        {
+            printk("waitpid: found zombie child, pid %d\n", current->pid);
+
+            if (pid != -1)
+            {
+                if (current->pid == pid)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        printk("waitpid: current pid %d, next pid %d\n", current->pid, current->next->pid);
+
+        current = current->next;
+        schedule();
+    }
+
+    if (current)
+    {
+        if (status)
+        {
+            *status = current->exit_code;
+        }
+
+        pid = current->pid;
+
+        return pid;
+    }
+    else
+    {
+        printk("waitpid: schedule()\n");
+        schedule();
+    }
+
+    return pid;
 }

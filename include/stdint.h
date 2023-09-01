@@ -16,7 +16,7 @@ typedef unsigned int    uintptr_t;
 
 #define INT8_MIN    (-128) 
 #define INT16_MIN   (-32768)
-#define INT32_MIN   (-2147483647 - 1)
+#define INT32_MIN   (-2147483647)
 #define INT64_MIN   (-9223372036854775807LL - 1)
 
 #define INT8_MAX    127

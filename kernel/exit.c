@@ -5,5 +5,5 @@
 
 void exit(int status)
 {
-    status;
+    printk("exit: exit_code %d\n", status);
 }
