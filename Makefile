@@ -9,7 +9,7 @@ export CC
 CSRCS = init/main.c init/version.c
 CSRCS += kernel/dma.c kernel/exec.c kernel/exit.c kernel/fork.c kernel/panic.c kernel/printk.c kernel/mm.c kernel/sched.c kernel/signal.c kernel/syscall.c kernel/time.c kernel/uname.c kernel/init.c kernel/shell.c fs/inode.c fs/super.c fs/open.c
 
-LIBSRCS = lib/ctype.c lib/string/strlen.c lib/string/strcpy.c lib/string/memcpy.c lib/string/memset.c lib/stdlib/sprintf.c lib/stdlib/malloc.c lib/stdio/puts.c lib/stdio/putchar.c lib/stdlib/itoa.c lib/stdio/gets.c
+LIBSRCS = lib/ctype.c lib/string/strlen.c lib/string/strcpy.c lib/string/memcpy.c lib/string/memset.c lib/string/strcmp.c lib/stdlib/sprintf.c lib/stdlib/malloc.c lib/stdio/puts.c lib/stdio/putchar.c lib/stdlib/itoa.c lib/stdio/gets.c
 
 include arch/$(TARGET)/rules.mk
 

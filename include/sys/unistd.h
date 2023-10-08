@@ -16,7 +16,7 @@ int         *crypt(const char *, const char *);
 int          dup(int);
 void         encrypt(char *, int);
 int          eof(int);
-int          execa(void *, const char **);
+int          execa(void *, const char **)  __sdcccall(0);
 int          execv(const char *, const char **);
 int          execve(const char *, const char **);
 int          execvp(const char *, const char **);

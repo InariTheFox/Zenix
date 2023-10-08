@@ -2,15 +2,21 @@
 #include "string.h"
 #include "stdint.h"
 
-void *memcpy(void *destination, void *source, size_t length)
+void *memcpy(void *destination, void *source, size_t length) __sdcccall(0) __naked
 {
-    uint8_t       *dp = destination;
-    const uint8_t *sp = source;
+    destination, source, length;
 
-    while (length-- > 0)
-    {
-        *dp++ = *sp++;
-    }
+    __asm
+halt
+    pop de
+    pop hl
+    pop bc
+    push hl
 
-    return destination;
+    lddr
+
+    pop hl
+    ret
+
+    __endasm;
 }

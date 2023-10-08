@@ -1,12 +1,28 @@
 #include "string.h"
 
-void *memset(void *ptr, int value, size_t num)
+void *memset(void *ptr, int value, size_t num) __sdcccall(0) __naked
 {
-    int i;
-    int *d = ptr;
+    ptr, value, num;
 
-    for (i = 0; i < num; i++)
-    {
-        *d++ = value;
-    }
+    __asm
+
+    pop hl
+    pop de
+    pop bc
+    push hl
+
+_loop:
+    ld (hl), e
+    inc hl
+    ld (hl), d
+    inc hl
+    dec bc
+    ld a, b
+    or c
+    jr nz, _loop
+
+    pop hl
+    ret
+    
+    __endasm;
 }

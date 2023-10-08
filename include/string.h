@@ -5,9 +5,9 @@
 
 void *memchr(const void *ptr, int value, size_t num);
 int memcmp(const void *ptr1, const void *ptr2, size_t num);
-void *memcpy(void *destination, const void *source, size_t num);
+void *memcpy(void *destination, const void *source, size_t num) __sdcccall(0);
 void *memmove(void *destination, const void *source, size_t num);
-void *memset(void *ptr, int value, size_t num);
+void *memset(void *ptr, int value, size_t num) __sdcccall(0);
 char *strcat(char *destination, const char * source);
 char *strchr(const char *str, int character);
 int strcmp(const char *str1, const char *str2);

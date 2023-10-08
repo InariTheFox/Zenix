@@ -41,6 +41,13 @@ void main(void)
     ramsize = 65536;
     procmem = PROGTOP - PROGBASE;
 
+    printk("Platform information:\n");
+    printk("Size of short:    %d bytes\n", sizeof(short));
+    printk("Size of int:      %d bytes\n", sizeof(int));
+    printk("Size of int long: %d bytes\n", sizeof(int long));
+    printk("Size of void *:   %d bytes\n", sizeof(void *));
+    printk("Size of size_t:   %d bytes\n", sizeof(size_t));
+
     mm_init((uint16_t *)PROGBASE, procmem);
     tty_init();
     inode_init();

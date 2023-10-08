@@ -1,6 +1,7 @@
 #include "stddef.h"
 #include "stdlib.h"
 #include "string.h"
+#include "cpu.h"
 #include "sys/errno.h"
 #include "sys/fs.h"
 #include "sys/kernel.h"
@@ -151,6 +152,7 @@ struct inode_t *inode_get(int dev, int nr)
 
     empty = inode_get_empty();
     inode = inode_table;
+
     while (inode < NR_INODE + inode_table)
     {
         if (inode->dev != dev || inode->ino != nr)
@@ -163,6 +165,7 @@ struct inode_t *inode_get(int dev, int nr)
 
         if (empty)
         {
+            printk("pre-inode_put\n");
             inode_put(empty);
         }
 
@@ -230,8 +233,10 @@ struct inode_t *inode_get_empty(void)
         }
     }
 
-    memset(inode, 0, sizeof(*inode));
+    memset(inode, 0, sizeof(struct inode_t));
     inode->count = 1;
+
+    halt();
 
     return inode;
 }

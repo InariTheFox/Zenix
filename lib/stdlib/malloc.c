@@ -10,7 +10,7 @@ void free(void *ptr)
 
     first_free = (struct mm_block *)(ptr - sizeof(struct mm_block));
 
-    memset(first_free + sizeof(struct mm_block), 0, first_free->size);
+    memset(first_free, 0, first_free->size + sizeof(struct mm_block));
 
     first_free->next = prev;
 }
@@ -54,9 +54,9 @@ void *malloc(size_t length)
 split:
     printk("malloc: splitting block at %x (%u bytes)\n", cur, cur->size);
 
-    next = (struct mm_block *)(cur + sizeof(uint16_t) + length);
+    next = (struct mm_block *)(cur + sizeof(struct mm_block) + length);
     next->next = cur->next;
-    next->size = cur->size - length - sizeof(uint16_t);
+    next->size = cur->size - length - sizeof(struct mm_block);
 
 alloc:
     if (cur == first_free)

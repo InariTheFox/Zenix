@@ -7,10 +7,8 @@
 /**
  * Execute a non-relocatable program.
  */
-int execa(void *entry, const char **argv)
+int execa(void *entry, const char **argv) __sdcccall(0)
 {
-    entry;
-
     int argc = 0;
     const char **ptr;
 

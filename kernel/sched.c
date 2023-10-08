@@ -144,6 +144,8 @@ pid_t waitpid(pid_t pid, int *status)
 
         current = current->next;
         schedule();
+
+        printk("waitpid: returned\n");
     }
 
     if (current)

@@ -43,11 +43,17 @@ int shell_main(int argc, char **argv)
         }
         else
         {
+            if (strcmp(shell->linebuf, "exit") == 0)
+            {
+                break;
+            }
+
             printk("sh: %s: command not found\n", shell->linebuf);
         }
     }
 
     printk("shell exited\n");
+    free(shell);
 
     return ret;
 }
